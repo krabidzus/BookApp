@@ -7,7 +7,13 @@ import { Controller, useForm } from 'react-hook-form';
 export default function Login() {
   const { login } = useAuth();
 
-  const { handleSubmit, control, watch } = useForm({
+  const {
+    handleSubmit,
+    control,
+    watch,
+    setError,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       email: '',
       password: '',
@@ -24,6 +30,10 @@ export default function Login() {
       await login(email, password);
       navigate('/home');
     } catch (e) {
+      setError('password', {
+        message: 'Password od Email is not correct.',
+        type: '400',
+      });
       console.log(e);
     }
   };
@@ -36,48 +46,47 @@ export default function Login() {
             <Col md={6}>
               <h1 className="text-center">BookApp</h1>
               <form onSubmit={handleSubmit(submitForm)}>
-                <Form>
-                  <Form.Group controlId="email-address">
-                    <Form.Label>Email address</Form.Label>
-                    <Controller
-                      control={control}
-                      name={'email'}
-                      defaultValue=""
-                      render={({ field }) => (
-                        <Form.Control
-                          {...field}
-                          type="email"
-                          placeholder="Email address"
-                          required
-                          className="mb-3"
-                        />
-                      )}
-                    />
-                    <Form.Control.Feedback type="invalid"></Form.Control.Feedback>
-                  </Form.Group>
+                <Form.Group controlId="email-address">
+                  <Form.Label>Email address</Form.Label>
+                  <Controller
+                    control={control}
+                    name={'email'}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <Form.Control
+                        {...field}
+                        type="email"
+                        placeholder="Email address"
+                        required
+                        className="mb-3"
+                      />
+                    )}
+                  />
+                  <Form.Control.Feedback type="invalid"></Form.Control.Feedback>
+                </Form.Group>
 
-                  <Form.Group controlId="password">
-                    <Form.Label>Password</Form.Label>
-                    <Controller
-                      control={control}
-                      name={'password'}
-                      render={({ field }) => (
-                        <Form.Control
-                          {...field}
-                          type="password"
-                          placeholder="Password"
-                          required
-                          className="mb-3"
-                        />
-                      )}
-                    />
-                    <Form.Control.Feedback type="invalid"></Form.Control.Feedback>
-                  </Form.Group>
+                <Form.Group controlId="password">
+                  <Form.Label>Password</Form.Label>
+                  <Controller
+                    control={control}
+                    name={'password'}
+                    render={({ field }) => (
+                      <Form.Control
+                        {...field}
+                        type="password"
+                        placeholder="Password"
+                        required
+                        className="mb-3"
+                      />
+                    )}
+                  />
+                  <p className="text-danger">{errors?.password?.message}</p>
+                  <Form.Control.Feedback type="invalid"></Form.Control.Feedback>
+                </Form.Group>
 
-                  <Button className="mb-1" type="submit">
-                    Login
-                  </Button>
-                </Form>
+                <Button className="mb-1" type="submit">
+                  Login
+                </Button>
               </form>
 
               <p>

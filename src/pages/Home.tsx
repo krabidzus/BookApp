@@ -13,6 +13,7 @@ import {
   Col,
   Row,
   Container,
+  Modal,
 } from 'react-bootstrap';
 import { deleteUserData, getUserData, writeUserData } from '../api/apiCalls';
 import BookCard from '../components/BookCard';
@@ -24,6 +25,8 @@ export default function Home() {
   const [selectedBook, setSelectedBook] = useState<Book>();
   const [uid, setUid] = useState<string>();
   const [books, setBooks] = useState<Book[]>([]);
+  const [show, setShow] = useState(false);
+  const [deletedBook, setDeletedBook] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -87,10 +90,16 @@ export default function Home() {
     }
   };
 
-  const handleDelete = (bookId: string) => {
+  const deleteBook = () => {
     if (uid) {
-      deleteUserData(bookId, uid);
+      deleteUserData(deletedBook, uid);
     }
+    setShow(false);
+  };
+
+  const handleDelete = (bookId: string) => {
+    setShow(true);
+    setDeletedBook(bookId);
   };
 
   const filterBy = () => true;
@@ -122,8 +131,6 @@ export default function Home() {
               <Form.Group>
                 <InputGroup>
                   <AsyncTypeahead
-                    //clearButton
-                    //defaultSelected={undefined}
                     className="w-75"
                     filterBy={filterBy}
                     id="async-example"
@@ -164,6 +171,20 @@ export default function Home() {
           </Row>
         </Container>
       </section>
+      <Modal show={show} onHide={() => setShow(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Porvrzení smazání</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Opravdu chcete tuto knihu smazat?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShow(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={deleteBook}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </main>
   );
 }
